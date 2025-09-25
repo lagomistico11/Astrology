@@ -146,15 +146,9 @@ async function sendEmail({ to, subject, html, type, data = {} }) {
   }
 }
 
-// Main request handler
 export async function GET(request) {
   const url = new URL(request.url);
   const path = url.pathname;
-
-  // Handle NextAuth routes
-  if (path.includes('/api/auth')) {
-    return authHandler(request);
-  }
 
   return NextResponse.json({ message: 'API is working' });
 }
@@ -162,11 +156,6 @@ export async function GET(request) {
 export async function POST(request) {
   const url = new URL(request.url);
   const path = url.pathname;
-
-  // Handle NextAuth routes
-  if (path.includes('/api/auth')) {
-    return authHandler(request);
-  }
 
   try {
     const body = await request.json();
