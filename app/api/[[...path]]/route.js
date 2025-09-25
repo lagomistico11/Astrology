@@ -341,12 +341,13 @@ export async function POST(request) {
 
     // User Notes
     if (path.includes('/api/user/notes')) {
-      if (request.method === 'POST') {
+      if (request.method === 'POST' && body.personalNotes) {
         const { personalNotes } = body;
         // Save personal notes to database
         return NextResponse.json({ success: true });
       }
       
+      // Return notes data for GET or POST without personalNotes
       return NextResponse.json({
         personal: 'My personal reflection notes...',
         admin: [
