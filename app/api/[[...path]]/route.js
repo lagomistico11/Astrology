@@ -5,7 +5,14 @@ import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { swisseph } from 'swisseph';
+
+// Dynamic import for swisseph to handle external module
+let swisseph = null;
+try {
+  swisseph = require('swisseph');
+} catch (error) {
+  console.warn('Swiss Ephemeris not available:', error.message);
+}
 
 // Initialize clients
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
