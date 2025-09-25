@@ -7,7 +7,7 @@ const nextConfig = {
     // Remove if not using Server Components
     serverComponentsExternalPackages: ['mongodb'],
   },
-  webpack(config, { dev }) {
+  webpack(config, { dev, isServer }) {
     if (dev) {
       // Reduce CPU/memory from file watching
       config.watchOptions = {
@@ -16,6 +16,13 @@ const nextConfig = {
         ignored: ['**/node_modules'],
       };
     }
+    
+    // Exclude swisseph from webpack processing to avoid binary file parsing errors
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push('swisseph');
+    }
+    
     return config;
   },
   onDemandEntries: {
