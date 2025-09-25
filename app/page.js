@@ -376,7 +376,7 @@ export default function Home() {
               <Calendar className="w-10 h-10 text-yellow-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-3">Easy Booking</h3>
               <p className="text-purple-200/70 text-sm">
-                Multiple ways to book: Google account, email, or direct contact
+                Seamless appointment scheduling with Google Calendar integration
               </p>
             </div>
             <div className="text-center p-6 rounded-lg bg-gradient-to-br from-purple-800/30 to-indigo-800/30 border border-yellow-500/20">
@@ -388,9 +388,9 @@ export default function Home() {
             </div>
             <div className="text-center p-6 rounded-lg bg-gradient-to-br from-purple-800/30 to-indigo-800/30 border border-yellow-500/20">
               <Mail className="w-10 h-10 text-yellow-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-3">Inclusive Access</h3>
+              <h3 className="text-lg font-semibold text-white mb-3">Complete Records</h3>
               <p className="text-purple-200/70 text-sm">
-                Everyone welcome - Google account helpful but not required
+                Detailed summaries and insights delivered to your inbox
               </p>
             </div>
           </div>
