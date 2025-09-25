@@ -425,7 +425,7 @@ export default function ClientPortal() {
                 <CardContent>
                   {Array.isArray(adminNotes) && adminNotes.length > 0 ? (
                     <div className="space-y-4">
-                      {Array.isArray(adminNotes) ? adminNotes.map((note, index) => (
+                      {adminNotes.map((note, index) => (
                         <div key={index} className="bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 p-4 rounded-lg border border-yellow-500/20">
                           <div className="flex justify-between items-start mb-2">
                             <h4 className="text-yellow-400 font-semibold">{note.title}</h4>
