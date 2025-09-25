@@ -102,7 +102,20 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the comprehensive astrology platform backend with all new features: Authentication System, User Registration, Admin Portal APIs, Client Portal APIs, Swiss Ephemeris Integration, Database Integration, and Email Notifications"
+user_problem_statement: "Fix the credentials sign-in issue. Users can register successfully but cannot sign in with their credentials. The NextAuth system shows 302 redirects but users are not properly authenticated and redirected to their portal."
+
+backend:
+  - task: "Credentials Sign-In Authentication"
+    implemented: true
+    working: false
+    file: "app/api/auth/[...nextauth]/route.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "User reported inability to sign in with credentials after successful registration. Fixed database connection issue (MONGO_URL path), JWT callback token expiration logic, and restarted NextJS service. Need to test actual sign-in flow."
 
 backend:
   - task: "API Health Check"
