@@ -253,6 +253,20 @@ export default function Home() {
                   <span className="text-sm">Welcome, {session.user?.name || session.user?.email}</span>
                 </div>
                 <Button
+                  onClick={() => {
+                    if (session.user?.role === 'admin' || session.user?.email === 'lago.mistico11@gmail.com') {
+                      window.location.href = '/admin';
+                    } else {
+                      window.location.href = '/portal';
+                    }
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="border-yellow-500/50 text-white hover:bg-yellow-500/10"
+                >
+                  Go to Dashboard
+                </Button>
+                <Button
                   onClick={() => signOut()}
                   variant="outline"
                   size="sm"
@@ -264,7 +278,7 @@ export default function Home() {
               </div>
             ) : (
               <Button
-                onClick={() => setShowLoginModal(true)}
+                onClick={() => window.location.href = '/auth/signin'}
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-purple-900 font-semibold"
               >
                 <User className="w-4 h-4 mr-2" />
