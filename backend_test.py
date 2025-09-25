@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://astro-client-1.preview.emergentagent.com"
+BASE_URL = "https://celestia-astro.preview.emergentagent.com"
 API_BASE = f"{BASE_URL}/api"
 
 class AstrologyPlatformTester:
