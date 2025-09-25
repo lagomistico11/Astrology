@@ -184,4 +184,3 @@ async function refreshAccessToken(token) {
   }
 }
 
-export const { GET, POST } = handlers;
