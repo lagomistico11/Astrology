@@ -594,52 +594,9 @@ export async function POST(request) {
         session: session 
       }, { status: 201 });
     }
-      const { serviceId, userId, serviceName, price, duration } = body;
-      const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL;
 
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: serviceName,
-                description: `${duration}-minute ${serviceName.toLowerCase()} session`,
-              },
-              unit_amount: Math.round(price * 100),
-            },
-            quantity: 1,
-          },
-        ],
-        mode: 'payment',
-        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}`,
-        metadata: {
-          serviceId,
-          userId,
-          serviceName,
-          duration: duration.toString(),
-        },
-        customer_email: userId,
-      });
-
-      // Store booking in database
-      const { db } = await connectToDatabase();
-      await db.collection('bookings').insertOne({
-        id: session.id,
-        serviceId,
-        serviceName,
-        userId,
-        price,
-        duration,
-        status: 'pending',
-        createdAt: new Date(),
-        stripeSessionId: session.id,
-      });
-
-      return NextResponse.json({ url: session.url, sessionId: session.id });
-    }
+    // Create Stripe Checkout Session (existing)
+    if (path.includes('/api/create-checkout')) {
 
     // Handle Stripe Webhooks (existing)
     if (path.includes('/api/webhook/stripe')) {
