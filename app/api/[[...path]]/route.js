@@ -140,7 +140,7 @@ async function sendEmail({ to, subject, html, type, data = {} }) {
         subject: `Booking Confirmation - ${data.bookingId}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px;">
-            <h1 style="color: #fbbf24; text-align: center;">✨ Mystic Astrology</h1>
+            <h1 style="color: #fbbf24; text-align: center;">✨ Celestia</h1>
             <h2>Your Session is Confirmed!</h2>
             <p>Dear ${data.customerName},</p>
             <p>Thank you for booking your cosmic journey with us. Your session has been confirmed:</p>
@@ -157,18 +157,15 @@ async function sendEmail({ to, subject, html, type, data = {} }) {
           </div>
         `
       },
-      payment_receipt: {
-        subject: `Payment Receipt - ${data.transactionId}`,
+      new_user_registration: {
+        subject: `New User Registration - ${data.userName}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #10b981;">Payment Received ✅</h2>
-            <p>Your payment has been successfully processed:</p>
-            <div style="background: #f0f9ff; padding: 15px; border-radius: 5px;">
-              <p><strong>Transaction ID:</strong> ${data.transactionId}</p>
-              <p><strong>Amount:</strong> $${data.amount}</p>
-              <p><strong>Service:</strong> ${data.serviceName}</p>
-              <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-            </div>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2>New User Registration</h2>
+            <p><strong>Name:</strong> ${data.userName}</p>
+            <p><strong>Email:</strong> ${data.userEmail}</p>
+            <p><strong>Registration Date:</strong> ${new Date().toLocaleString()}</p>
+            ${data.birthInfo ? `<p><strong>Birth Info:</strong> ${data.birthInfo}</p>` : ''}
           </div>
         `
       }
