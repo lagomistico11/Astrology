@@ -520,8 +520,80 @@ export async function POST(request) {
       return NextResponse.json({ success: true });
     }
 
-    // Create Stripe Checkout Session (existing)
-    if (path.includes('/api/create-checkout')) {
+    // New Payment System - /api/payments/v1/checkout/session
+    if (path.includes('/api/payments/v1/checkout/session')) {
+      const { serviceId, userId, serviceName, price, duration } = body;
+      const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL;
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: serviceName,
+                description: `${duration}-minute ${serviceName.toLowerCase()} session`,
+              },
+              unit_amount: Math.round(price * 100),
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}`,
+        metadata: {
+          serviceId,
+          userId,
+          serviceName,
+          duration: duration.toString(),
+        },
+        customer_email: userId,
+      });
+
+      // Store payment in database
+      const { db } = await connectToDatabase();
+      await db.collection('payments').insertOne({
+        checkoutSessionId: session.id,
+        serviceId,
+        serviceName,
+        userId,
+        price,
+        duration,
+        status: 'pending',
+        createdAt: new Date(),
+        stripeSessionId: session.id,
+      });
+
+      return NextResponse.json({ url: session.url, sessionId: session.id });
+    }
+
+    // Sessions Management - POST create session
+    if (path.includes('/api/sessions')) {
+      const { serviceId, userId, scheduledDate, scheduledTime } = body;
+      const { db } = await connectToDatabase();
+      
+      const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      const session = {
+        id: sessionId,
+        serviceId,
+        userId,
+        scheduledDate,
+        scheduledTime,
+        status: 'scheduled',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      await db.collection('sessions').insertOne(session);
+      
+      return NextResponse.json({ 
+        message: 'Session created successfully', 
+        session: session 
+      }, { status: 201 });
+    }
       const { serviceId, userId, serviceName, price, duration } = body;
       const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL;
 
