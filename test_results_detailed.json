@@ -1,0 +1,99 @@
+{
+  "summary": {
+    "total_tests": 11,
+    "passed_tests": 4,
+    "failed_tests": 7,
+    "success_rate": "36.4%"
+  },
+  "results": [
+    {
+      "test": "API Health Check",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "Exception: HTTPSConnectionPool(host='astro-client-1.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
+      "response_data": null,
+      "timestamp": "2025-09-25T03:07:46.094321"
+    },
+    {
+      "test": "Services API",
+      "status": "\u2705 PASS",
+      "success": true,
+      "details": "Found 5 services with Stripe integration: General or Purpose Reading, Personal Tarot Reading, Birth Chart Analysis, Birth Chart + Tarot Combo, Follow Up Session",
+      "response_data": null,
+      "timestamp": "2025-09-25T03:07:47.827923"
+    },
+    {
+      "test": "New Payment System",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": "Service not found",
+      "timestamp": "2025-09-25T03:07:48.032528"
+    },
+    {
+      "test": "Sessions Management (GET)",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "HTTP 502",
+      "response_data": "",
+      "timestamp": "2025-09-25T03:07:48.170351"
+    },
+    {
+      "test": "Stripe Webhook",
+      "status": "\u2705 PASS",
+      "success": true,
+      "details": "Webhook responded with HTTP 502",
+      "response_data": null,
+      "timestamp": "2025-09-25T03:07:48.207289"
+    },
+    {
+      "test": "NextAuth Providers",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "HTTP 502",
+      "response_data": "",
+      "timestamp": "2025-09-25T03:07:48.241241"
+    },
+    {
+      "test": "User Registration",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "HTTP 502",
+      "response_data": "",
+      "timestamp": "2025-09-25T03:07:48.272497"
+    },
+    {
+      "test": "Admin Stats",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "HTTP 502",
+      "response_data": "",
+      "timestamp": "2025-09-25T03:07:48.302547"
+    },
+    {
+      "test": "Client Portal",
+      "status": "\u274c FAIL",
+      "success": false,
+      "details": "Exception: HTTPSConnectionPool(host='astro-client-1.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)",
+      "response_data": null,
+      "timestamp": "2025-09-25T03:07:58.375030"
+    },
+    {
+      "test": "Enhanced Email System",
+      "status": "\u2705 PASS",
+      "success": true,
+      "details": "Email sent successfully: <efb14ed1-57d0-b352-3b56-7a3ad3648f15@gmail.com>",
+      "response_data": null,
+      "timestamp": "2025-09-25T03:08:00.531441"
+    },
+    {
+      "test": "Legacy Payment System",
+      "status": "\u2705 PASS",
+      "success": true,
+      "details": "Legacy checkout working: cs_test_a16tuFcr3VDH...",
+      "response_data": null,
+      "timestamp": "2025-09-25T03:08:01.101780"
+    }
+  ],
+  "timestamp": "2025-09-25T03:08:01.102694"
+}
