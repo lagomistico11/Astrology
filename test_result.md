@@ -266,12 +266,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "User Registration"
-    - "Authentication Setup"
-    - "Email Notifications"
-  stuck_tasks:
-    - "User Registration"
-    - "Authentication Setup"
+    - "Complete User Journey Testing"
+    - "Final Integration Verification"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
