@@ -311,7 +311,7 @@ export default function ClientPortal() {
                 <CardTitle className="text-white text-xl">Session History</CardTitle>
               </CardHeader>
               <CardContent>
-                {sessions.length > 0 ? (
+                {Array.isArray(sessions) && sessions.length > 0 ? (
                   <div className="space-y-4">
                     {sessions.map((session, index) => (
                       <div key={index} className="p-4 border border-purple-500/30 rounded-lg">
