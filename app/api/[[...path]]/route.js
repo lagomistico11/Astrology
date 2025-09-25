@@ -227,33 +227,6 @@ export async function GET(request) {
       return NextResponse.json({ status: 'ok', timestamp: new Date().toISOString() });
     }
 
-    // Services API - return 5 seeded services with Stripe integration
-    if (path.includes('/api/services')) {
-      const { db } = await connectToDatabase();
-      const services = await db.collection('services').find({ active: true }).toArray();
-      
-      // Add id field for each service for compatibility
-      const servicesWithId = services.map(service => ({
-        ...service,
-        id: service._id.toString()
-      }));
-      
-      return NextResponse.json(servicesWithId);
-    }
-
-    // Sessions Management - GET sessions
-    if (path.includes('/api/sessions')) {
-      const { db } = await connectToDatabase();
-      const sessions = await db.collection('sessions').find({}).toArray();
-      
-      const sessionsWithId = sessions.map(session => ({
-        ...session,
-        id: session._id.toString()
-      }));
-      
-      return NextResponse.json(sessionsWithId);
-    }
-
     return NextResponse.json({ message: 'API is working' });
   } catch (error) {
     console.error('GET API Error:', error);
