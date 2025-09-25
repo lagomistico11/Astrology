@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Astrology Platform
-Tests all backend endpoints and integrations
+Comprehensive Backend API Testing Suite for Astrology Platform
+Tests all backend endpoints including new features:
+- Authentication System (email/password and Google OAuth)
+- User Registration with birth chart information
+- Admin Portal APIs (stats, users, revenue)
+- Client Portal APIs (birth chart generation, sessions, notes)
+- Swiss Ephemeris Integration
+- Database Integration
+- Email Notifications
 """
 
 import requests
@@ -9,6 +16,7 @@ import json
 import os
 import time
 from datetime import datetime
+import uuid
 
 # Get base URL from environment
 BASE_URL = "https://astro-client-1.preview.emergentagent.com"
@@ -17,12 +25,48 @@ API_BASE = f"{BASE_URL}/api"
 class AstrologyBackendTester:
     def __init__(self):
         self.results = {
+            # Core Infrastructure
             "api_health": {"status": "pending", "details": ""},
             "database_connection": {"status": "pending", "details": ""},
-            "stripe_integration": {"status": "pending", "details": ""},
+            "error_handling": {"status": "pending", "details": ""},
+            
+            # Authentication System
+            "user_registration": {"status": "pending", "details": ""},
+            "auth_endpoints": {"status": "pending", "details": ""},
+            
+            # Admin Portal APIs
+            "admin_stats": {"status": "pending", "details": ""},
+            "admin_users": {"status": "pending", "details": ""},
+            "admin_revenue": {"status": "pending", "details": ""},
+            "admin_sessions": {"status": "pending", "details": ""},
+            "admin_notes": {"status": "pending", "details": ""},
+            
+            # Client Portal APIs
+            "birth_chart_generation": {"status": "pending", "details": ""},
+            "user_profile": {"status": "pending", "details": ""},
+            "user_sessions": {"status": "pending", "details": ""},
+            "user_notes": {"status": "pending", "details": ""},
+            
+            # Swiss Ephemeris Integration
+            "swiss_ephemeris": {"status": "pending", "details": ""},
+            
+            # Email Notifications
             "email_service": {"status": "pending", "details": ""},
-            "auth_setup": {"status": "pending", "details": ""},
-            "error_handling": {"status": "pending", "details": ""}
+            "registration_notifications": {"status": "pending", "details": ""},
+            
+            # Payment Integration
+            "stripe_integration": {"status": "pending", "details": ""}
+        }
+        
+        # Test data
+        self.test_user_email = f"testuser_{uuid.uuid4().hex[:8]}@example.com"
+        self.test_user_data = {
+            "email": self.test_user_email,
+            "password": "SecurePassword123!",
+            "name": "Luna Starweaver",
+            "birthDate": "1990-06-15",
+            "birthTime": "14:30",
+            "birthPlace": "New York, NY"
         }
         
     def test_api_health(self):
