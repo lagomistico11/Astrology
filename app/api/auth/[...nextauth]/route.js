@@ -12,7 +12,7 @@ async function connectToDatabase() {
   return { client, db };
 }
 
-const handler = NextAuth({
+export const { handlers, auth } = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -181,4 +181,4 @@ async function refreshAccessToken(token) {
   }
 }
 
-export { handler as GET, handler as POST };
+export const { GET, POST } = handlers;
