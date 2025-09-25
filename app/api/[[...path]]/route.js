@@ -237,7 +237,7 @@ export async function POST(request) {
     const body = await request.json();
 
     // User Registration
-    if (path.includes('/api/auth/register')) {
+    if (path.includes('/api/register') || path.includes('/auth/register')) {
       const { email, password, name, birthDate, birthTime, birthPlace } = body;
       const { db } = await connectToDatabase();
 
