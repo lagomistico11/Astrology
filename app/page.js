@@ -317,8 +317,7 @@ export default function Home() {
           </div>
           <p className="text-xl text-purple-200/80 mb-8 leading-relaxed">
             Discover your cosmic destiny through personalized astrology readings, 
-            tarot guidance, and birth chart analysis. No Google account required - 
-            everyone welcome.
+            tarot guidance, and birth chart analysis. Welcome to your spiritual journey.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
