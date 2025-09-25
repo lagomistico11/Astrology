@@ -251,18 +251,21 @@ backend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 1
+  version: "2.0"
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
+    - "User Registration"
     - "Authentication Setup"
+    - "Email Notifications"
   stuck_tasks:
+    - "User Registration"
     - "Authentication Setup"
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "testing"
-      message: "Backend testing completed. 5/6 tests passing. Fixed nodemailer typo and added missing STRIPE_WEBHOOK_SECRET. NextAuth configuration needs investigation - both providers and signin endpoints return 500 errors despite correct environment variables."
+      message: "Comprehensive backend testing completed. Major breakthrough: Fixed critical Swiss Ephemeris webpack configuration issue that was causing all API endpoints to fail with HTTP 500 errors. 15/18 tests now passing. Key achievements: Swiss Ephemeris integration working with proper astronomical calculations, all admin portal APIs functional, client portal APIs working, email service operational, Stripe integration successful. Remaining issues: User registration endpoint (HTTP 500), NextAuth configuration problems, and email notifications (dependent on registration fix). Recommend main agent focus on user registration debugging and NextAuth setup."
