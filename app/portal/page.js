@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { Star, Calendar, User, Sun, Moon, Sparkles, Edit, Save, BookOpen, Clock, CreditCard } from 'lucide-react';
 
 export default function ClientPortal() {
