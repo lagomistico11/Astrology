@@ -221,6 +221,11 @@ export async function GET(request) {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  // Health check
+  if (path.includes('/api/health')) {
+    return NextResponse.json({ status: 'ok', timestamp: new Date().toISOString() });
+  }
+
   return NextResponse.json({ message: 'API is working' });
 }
 
