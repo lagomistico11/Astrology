@@ -170,7 +170,7 @@ export default function ClientPortal() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold text-yellow-400">
-                    {sessions.filter(s => s.status === 'completed').length}
+                    {Array.isArray(sessions) ? sessions.filter(s => s.status === 'completed').length : 0}
                   </div>
                   <p className="text-purple-200/70 text-sm">Readings completed</p>
                 </CardContent>
