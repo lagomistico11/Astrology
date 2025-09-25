@@ -6,41 +6,45 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, Clock, Calendar, Mail, Phone, User, LogOut, CreditCard, Sparkles, Sun, Moon, Globe, X } from 'lucide-react';
 
-const services = [
-  {
-    id: 'personal_tarot',
-    name: 'Personal Tarot Reading',
-    price: 85,
-    duration: 60,
-    description: 'Deep insights into your personal journey, relationships, and life path through traditional tarot cards.',
-    features: ['60-minute session', 'Personalized insights', 'Written summary', 'Recording available']
-  },
-  {
-    id: 'birth_chart',
-    name: 'Birth Chart Analysis',
-    price: 120,
-    duration: 90,
-    description: 'Complete astrological birth chart interpretation revealing your cosmic blueprint and life purpose.',
-    features: ['90-minute session', 'Detailed chart analysis', 'PDF report included', 'Planetary positions']
-  },
-  {
-    id: 'combo_reading',
-    name: 'Birth Chart + Tarot Combo',
-    price: 165,
-    duration: 120,
-    description: 'The ultimate mystical experience combining birth chart analysis with personalized tarot guidance.',
-    features: ['120-minute session', 'Complete analysis', 'Combined insights', 'Premium package'],
-    popular: true
-  },
-  {
-    id: 'follow_up',
-    name: 'Follow Up Session',
-    price: 45,
-    duration: 30,
-    description: 'Continue your journey with focused guidance and updates on your previous readings.',
-    features: ['30-minute session', 'Progress review', 'New insights', 'Affordable pricing']
-  }
-];
+  const [services, setServices] = useState([
+    {
+      id: 'personal-tarot',
+      key: 'personal-tarot',
+      name: 'Personal Tarot Reading',
+      price: 85,
+      durationMins: 60,
+      description: 'Deep insights into your personal journey, relationships, and life path through traditional tarot cards.',
+      features: ['60-minute session', 'Personalized insights', 'Written summary', 'Recording available']
+    },
+    {
+      id: 'birth-chart',
+      key: 'birth-chart',
+      name: 'Birth Chart Analysis',
+      price: 120,
+      durationMins: 90,
+      description: 'Complete astrological birth chart interpretation revealing your cosmic blueprint and life purpose.',
+      features: ['90-minute session', 'Detailed chart analysis', 'PDF report included', 'Planetary positions']
+    },
+    {
+      id: 'chart-tarot-combo',
+      key: 'chart-tarot-combo',
+      name: 'Birth Chart + Tarot Combo',
+      price: 165,
+      durationMins: 120,
+      description: 'The ultimate mystical experience combining birth chart analysis with personalized tarot guidance.',
+      features: ['120-minute session', 'Complete analysis', 'Combined insights', 'Premium package'],
+      popular: true
+    },
+    {
+      id: 'follow-up',
+      key: 'follow-up',
+      name: 'Follow Up Session',
+      price: 45,
+      durationMins: 30,
+      description: 'Continue your journey with focused guidance and updates on your previous readings.',
+      features: ['30-minute session', 'Progress review', 'New insights', 'Affordable pricing']
+    }
+  ]);
 
 function ServiceCard({ service, onBook, loading }) {
   return (
