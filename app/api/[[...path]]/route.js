@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { swisseph } from 'swisseph';
+
 // Initialize clients
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-10-16',
@@ -40,6 +44,50 @@ const emailTransporter = nodemailer.createTransport({
     rejectUnauthorized: false
   }
 });
+
+// Birth chart calculation using Swiss Ephemeris
+async function calculateBirthChart({ birthDate, birthTime, latitude, longitude }) {
+  try {
+    // This is a simplified example - real Swiss Ephemeris integration would be more complex
+    const julianDay = swisseph.swe_julday(
+      parseInt(birthDate.split('-')[0]), // year
+      parseInt(birthDate.split('-')[1]), // month
+      parseInt(birthDate.split('-')[2]), // day
+      parseFloat(birthTime.split(':')[0]) + parseFloat(birthTime.split(':')[1]) / 60, // hour
+      1 // calendar type: 1 = Gregorian
+    );
+
+    const planets = [];
+    const planetIds = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto
+    const planetNames = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'];
+
+    for (let i = 0; i < planetIds.length; i++) {
+      const position = swisseph.swe_calc_ut(julianDay, planetIds[i], 0);
+      if (position.longitude !== undefined) {
+        const sign = Math.floor(position.longitude / 30);
+        const signNames = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+        
+        planets.push({
+          name: planetNames[i],
+          longitude: position.longitude,
+          sign: signNames[sign],
+          degree: position.longitude % 30
+        });
+      }
+    }
+
+    return {
+      julianDay,
+      planets,
+      houses: [], // Houses calculation would go here
+      aspects: [], // Aspects calculation would go here
+      generated: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('Birth chart calculation error:', error);
+    return null;
+  }
+}
 
 // Google Calendar helpers
 async function getGoogleCalendarClient(token) {
