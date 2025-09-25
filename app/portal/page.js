@@ -423,7 +423,7 @@ export default function ClientPortal() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {adminNotes.length > 0 ? (
+                  {Array.isArray(adminNotes) && adminNotes.length > 0 ? (
                     <div className="space-y-4">
                       {adminNotes.map((note, index) => (
                         <div key={index} className="bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 p-4 rounded-lg border border-yellow-500/20">
