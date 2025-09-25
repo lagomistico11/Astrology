@@ -569,6 +569,9 @@ class AstrologyPlatformTester:
         
         # Authentication & User Management
         self.test_user_authentication()
+        self.test_database_user_verification()
+        self.test_credentials_authentication()
+        self.test_session_establishment()
         self.test_user_registration()
         
         # Portal Tests with New Structure
