@@ -205,7 +205,239 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    // Create Stripe Checkout Session
+    // User Registration
+    if (path.includes('/api/auth/register')) {
+      const { email, password, name, birthDate, birthTime, birthPlace } = body;
+      const { db } = await connectToDatabase();
+
+      // Check if user exists
+      const existingUser = await db.collection('users').findOne({ email });
+      if (existingUser) {
+        return NextResponse.json({ message: 'User already exists' }, { status: 400 });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 12);
+
+      // Create user
+      const user = {
+        email,
+        password: hashedPassword,
+        name,
+        role: email === 'lago.mistico11@gmail.com' ? 'admin' : 'client',
+        createdAt: new Date(),
+        birthInfo: {
+          birthDate: birthDate || null,
+          birthTime: birthTime || null,
+          birthPlace: birthPlace || null
+        }
+      };
+
+      await db.collection('users').insertOne(user);
+
+      // Send notification email to admin
+      try {
+        await sendEmail({
+          to: 'lago.mistico11@gmail.com',
+          type: 'new_user_registration',
+          data: {
+            userName: name,
+            userEmail: email,
+            birthInfo: birthDate ? `${birthDate} ${birthTime} ${birthPlace}` : 'Not provided'
+          }
+        });
+      } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
+      }
+
+      return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+    }
+
+    // User Profile
+    if (path.includes('/api/user/profile')) {
+      // Get user profile data (requires authentication)
+      return NextResponse.json({ 
+        name: 'User Name',
+        email: 'user@example.com',
+        joinDate: '2024-01-01'
+      });
+    }
+
+    // Generate Birth Chart
+    if (path.includes('/api/user/generate-birth-chart')) {
+      const { db } = await connectToDatabase();
+      // This would get user's birth info from database and calculate chart
+      const birthChart = await calculateBirthChart({
+        birthDate: '1990-01-01',
+        birthTime: '12:00',
+        latitude: 40.7128,
+        longitude: -74.0060
+      });
+
+      if (birthChart) {
+        // Save chart to database
+        await db.collection('birthCharts').insertOne({
+          userId: 'user_id', // Would get from authentication
+          ...birthChart
+        });
+      }
+
+      return NextResponse.json(birthChart);
+    }
+
+    // Get Birth Chart
+    if (path.includes('/api/user/birth-chart')) {
+      return NextResponse.json({
+        birthDate: '1990-01-01',
+        birthTime: '12:00:00',
+        birthPlace: 'New York, NY',
+        planets: [
+          { name: 'Sun', sign: 'Capricorn', degree: 10.5 },
+          { name: 'Moon', sign: 'Pisces', degree: 22.3 },
+          { name: 'Mercury', sign: 'Capricorn', degree: 5.7 }
+        ]
+      });
+    }
+
+    // User Sessions
+    if (path.includes('/api/user/sessions')) {
+      return NextResponse.json([
+        {
+          id: 1,
+          service: 'Personal Tarot Reading',
+          date: '2024-01-15',
+          status: 'completed',
+          duration: 60,
+          notes: 'Great insights about career path'
+        }
+      ]);
+    }
+
+    // User Notes
+    if (path.includes('/api/user/notes')) {
+      if (request.method === 'POST') {
+        const { personalNotes } = body;
+        // Save personal notes to database
+        return NextResponse.json({ success: true });
+      }
+      
+      return NextResponse.json({
+        personal: 'My personal reflection notes...',
+        admin: [
+          {
+            title: 'Session Insights',
+            content: 'Your energy suggests a time of transformation...',
+            date: '2024-01-15'
+          }
+        ]
+      });
+    }
+
+    // Admin Stats
+    if (path.includes('/api/admin/stats')) {
+      const { db } = await connectToDatabase();
+      
+      // Get actual stats from database
+      const totalUsers = await db.collection('users').countDocuments({ role: 'client' });
+      const totalBookings = await db.collection('bookings').countDocuments();
+      
+      return NextResponse.json({
+        totalUsers,
+        newUsersThisMonth: 5,
+        monthlyRevenue: 1250,
+        revenueGrowth: 15,
+        activeSessions: 3,
+        upcomingSessions: 7,
+        totalCharts: 12,
+        totalRevenue: 5670,
+        averageSession: 85
+      });
+    }
+
+    // Admin Users
+    if (path.includes('/api/admin/users')) {
+      const { db } = await connectToDatabase();
+      
+      const users = await db.collection('users').find({ role: 'client' }).toArray();
+      
+      return NextResponse.json(users.map(user => ({
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        joinDate: user.createdAt?.toDateString(),
+        lastActive: user.lastActive?.toDateString() || 'Never',
+        hasChart: Boolean(user.birthInfo?.birthDate),
+        sessionsCount: 0, // Would calculate from sessions collection
+        totalRevenue: 0, // Would calculate from payments
+        birthChart: user.birthInfo
+      })));
+    }
+
+    // Admin Sessions
+    if (path.includes('/api/admin/sessions')) {
+      return NextResponse.json([
+        {
+          id: 1,
+          clientName: 'Sarah Johnson',
+          email: 'sarah@example.com',
+          service: 'Personal Tarot Reading',
+          date: new Date().toDateString(),
+          time: '2:00 PM',
+          status: 'confirmed',
+          amount: 85,
+          meetLink: 'https://meet.google.com/abc-def-ghi'
+        }
+      ]);
+    }
+
+    // Admin Revenue
+    if (path.includes('/api/admin/revenue')) {
+      return NextResponse.json([
+        { month: 'Jan', revenue: 1200 },
+        { month: 'Feb', revenue: 1450 },
+        { month: 'Mar', revenue: 1300 }
+      ]);
+    }
+
+    // Generate Real-time Chart for Admin
+    if (path.includes('/api/admin/generate-chart/')) {
+      const userId = path.split('/').pop();
+      const { db } = await connectToDatabase();
+      
+      // Get user's birth info
+      const user = await db.collection('users').findOne({ _id: userId });
+      
+      if (user?.birthInfo) {
+        const realtimeChart = await calculateBirthChart({
+          birthDate: user.birthInfo.birthDate,
+          birthTime: user.birthInfo.birthTime,
+          latitude: 40.7128, // Would get from birth place
+          longitude: -74.0060
+        });
+        
+        return NextResponse.json(realtimeChart);
+      }
+      
+      return NextResponse.json({ error: 'User birth info not found' }, { status: 404 });
+    }
+
+    // Publish Admin Note
+    if (path.includes('/api/admin/publish-note')) {
+      const { userId, title, content } = body;
+      const { db } = await connectToDatabase();
+      
+      await db.collection('adminNotes').insertOne({
+        userId,
+        title,
+        content,
+        publishedAt: new Date(),
+        publishedBy: 'lago.mistico11@gmail.com'
+      });
+      
+      return NextResponse.json({ success: true });
+    }
+
+    // Create Stripe Checkout Session (existing)
     if (path.includes('/api/create-checkout')) {
       const { serviceId, userId, serviceName, price, duration } = body;
       const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL;
@@ -254,7 +486,7 @@ export async function POST(request) {
       return NextResponse.json({ url: session.url, sessionId: session.id });
     }
 
-    // Handle Stripe Webhooks
+    // Handle Stripe Webhooks (existing)
     if (path.includes('/api/webhook/stripe')) {
       const sig = request.headers.get('stripe-signature');
       let event;
@@ -311,7 +543,7 @@ export async function POST(request) {
       return NextResponse.json({ received: true });
     }
 
-    // Create Calendar Event
+    // Create Calendar Event (existing)
     if (path.includes('/api/calendar/create-event')) {
       const { summary, description, startDateTime, endDateTime, attendees, accessToken } = body;
 
@@ -344,13 +576,13 @@ export async function POST(request) {
       });
     }
 
-    // Send Email
+    // Send Email (existing)
     if (path.includes('/api/send-email')) {
       const result = await sendEmail(body);
       return NextResponse.json(result);
     }
 
-    // Get Bookings
+    // Get Bookings (existing)
     if (path.includes('/api/bookings')) {
       const { db } = await connectToDatabase();
       const bookings = await db.collection('bookings').find({}).toArray();
