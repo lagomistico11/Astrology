@@ -48,7 +48,7 @@ export default function SignIn() {
         }
       } else {
         // Register new user
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
