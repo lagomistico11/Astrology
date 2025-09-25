@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, Clock, Calendar, Mail, Phone, User, LogOut, CreditCard, Sparkles, Sun, Moon, Globe } from 'lucide-react';
+import { Star, Clock, Calendar, Mail, Phone, User, LogOut, CreditCard, Sparkles, Sun, Moon, Globe, X } from 'lucide-react';
 
 const services = [
   {
@@ -99,90 +99,81 @@ function ServiceCard({ service, onBook, loading }) {
   );
 }
 
-function LoginPortal({ onSignIn }) {
+function LoginModal({ isOpen, onClose, onSignIn }) {
+  if (!isOpen) return null;
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50">
       {/* Background Stars */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-20 w-1 h-1 bg-yellow-400 rounded-full animate-pulse"></div>
         <div className="absolute top-32 right-32 w-1 h-1 bg-purple-400 rounded-full animate-ping"></div>
         <div className="absolute bottom-40 left-40 w-1 h-1 bg-yellow-300 rounded-full animate-pulse"></div>
         <div className="absolute bottom-60 right-20 w-1 h-1 bg-blue-400 rounded-full animate-ping"></div>
-        <div className="absolute top-1/2 left-10 w-2 h-2 bg-yellow-400 rounded-full animate-pulse opacity-60"></div>
-        <div className="absolute top-1/3 right-16 w-1 h-1 bg-purple-300 rounded-full animate-ping"></div>
-      </div>
-
-      {/* Language Selector */}
-      <div className="absolute top-6 right-6">
-        <Button variant="outline" className="border-yellow-500/50 text-white hover:bg-yellow-500/10 text-sm">
-          <Globe className="w-4 h-4 mr-2" />
-          🇺🇸 English
-        </Button>
-      </div>
-
-      {/* Celestial Logo Stars */}
-      <div className="absolute top-10 left-10">
-        <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
-      </div>
-      <div className="absolute bottom-10 right-10">
-        <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
       </div>
 
       {/* Main Portal Card */}
-      <Card className="w-full max-w-md bg-gradient-to-br from-purple-900/60 to-indigo-900/60 border border-yellow-500/40 backdrop-blur-lg shadow-2xl">
+      <Card className="w-full max-w-md bg-gradient-to-br from-purple-900/80 to-indigo-900/80 border border-yellow-500/40 backdrop-blur-lg shadow-2xl relative">
+        <Button
+          onClick={onClose}
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 right-4 text-white hover:bg-white/10"
+        >
+          <X className="w-4 h-4" />
+        </Button>
+
         <CardHeader className="text-center pb-8">
           {/* Logo */}
           <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Sun className="w-8 h-8 text-purple-900" />
           </div>
           
-          <CardTitle className="text-4xl font-bold text-white mb-2">
-            Celestia
+          <CardTitle className="text-3xl font-bold text-white mb-2">
+            Enter Celestia
           </CardTitle>
-          <CardDescription className="text-purple-200/80 text-lg">
-            Unlock the mysteries of the stars
+          <CardDescription className="text-purple-200/80">
+            Sign in to book your cosmic journey
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Portal Access Header */}
-          <div className="text-center py-6 px-6 border border-yellow-500/30 rounded-lg bg-gradient-to-r from-purple-800/30 to-indigo-800/30">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Sparkles className="w-5 h-5 text-yellow-400" />
-              <h3 className="text-xl font-semibold text-white uppercase tracking-wider">
-                Enter Your Celestial Realm
-              </h3>
-              <Sparkles className="w-5 h-5 text-yellow-400" />
-            </div>
-            <p className="text-purple-200/70 text-sm">
-              Access your astrology and tarot portal
-            </p>
-          </div>
-
-          {/* Google Sign In Button */}
+          {/* Google Sign In */}
           <Button 
             onClick={onSignIn}
-            className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-purple-900 font-bold py-4 text-lg rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-4 text-base rounded-lg transition-all duration-300 border border-gray-300"
           >
-            <User className="w-5 h-5 mr-3" />
-            ENTER CELESTIA
+            <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
           </Button>
 
-          {/* Divider */}
+          {/* Email Option */}
+          <div className="text-center">
+            <p className="text-purple-200/60 text-sm mb-4">
+              Don't have a Google account? Contact us directly:
+            </p>
+            <Button 
+              variant="outline"
+              className="border-yellow-500/50 text-white hover:bg-yellow-500/10"
+              onClick={() => window.open('mailto:Lago.mistico11@gmail.com?subject=Booking Request', '_blank')}
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Email to Book
+            </Button>
+          </div>
+
           <div className="text-center">
             <p className="text-purple-200/60 text-sm">
-              Step into a world where the cosmos guides your path
+              We'll help you schedule your celestial session
             </p>
           </div>
         </CardContent>
       </Card>
-
-      {/* Theme Toggle */}
-      <div className="absolute bottom-6 left-6">
-        <Button variant="outline" size="icon" className="border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10">
-          <Sun className="w-4 h-4" />
-        </Button>
-      </div>
     </div>
   );
 }
@@ -191,10 +182,12 @@ export default function Home() {
   const { data: session, status } = useSession();
   const [bookingService, setBookingService] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleBooking = async (service) => {
+    // If not logged in, show login modal
     if (!session) {
-      signIn('google');
+      setShowLoginModal(true);
       return;
     }
 
@@ -232,29 +225,15 @@ export default function Home() {
     }
   };
 
-  // Show login portal if not authenticated
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Sun className="w-8 h-8 text-purple-900" />
-          </div>
-          <p className="text-white text-lg">Connecting to the cosmos...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleSignIn = async () => {
+    setShowLoginModal(false);
+    await signIn('google');
+  };
 
-  if (!session) {
-    return <LoginPortal onSignIn={() => signIn('google')} />;
-  }
-
-  // Main Dashboard for authenticated users
   return (
     <div className="min-h-screen">
       {/* Navigation Header */}
-      <nav className="sticky top-0 z-50 bg-gradient-to-r from-purple-900/90 to-indigo-900/90 backdrop-blur-sm border-b border-yellow-500/30">
+      <nav className="sticky top-0 z-40 bg-gradient-to-r from-purple-900/90 to-indigo-900/90 backdrop-blur-sm border-b border-yellow-500/30">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
@@ -262,48 +241,91 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">Celestia</h1>
-              <p className="text-purple-200/70 text-sm">Mystic Portal</p>
+              <p className="text-purple-200/70 text-sm">Mystic Astrology</p>
             </div>
           </div>
           
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 text-white">
-              <User className="w-4 h-4" />
-              <span className="text-sm">Welcome, {session.user?.name || session.user?.email}</span>
-            </div>
-            <Button
-              onClick={() => signOut()}
-              variant="outline"
-              size="sm"
-              className="border-yellow-500/50 text-white hover:bg-yellow-500/10"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Exit Celestia
-            </Button>
+            {session ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 text-white">
+                  <User className="w-4 h-4" />
+                  <span className="text-sm">Welcome, {session.user?.name || session.user?.email}</span>
+                </div>
+                <Button
+                  onClick={() => signOut()}
+                  variant="outline"
+                  size="sm"
+                  className="border-yellow-500/50 text-white hover:bg-yellow-500/10"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => setShowLoginModal(true)}
+                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-purple-900 font-semibold"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+            )}
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Always Visible */}
       <div className="relative py-20 px-6 text-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-indigo-900/20"></div>
+        {/* Background Stars */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className={`absolute w-1 h-1 bg-yellow-400 rounded-full animate-pulse`}
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                opacity: Math.random() * 0.8 + 0.2,
+              }}
+            />
+          ))}
+        </div>
+
         <div className="relative max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6">
             <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
             <h1 className="text-5xl font-bold text-white">
-              Your Cosmic Journey Awaits
+              Unlock the Mysteries of the Stars
             </h1>
             <Sparkles className="w-8 h-8 text-yellow-400 animate-pulse" />
           </div>
           <p className="text-xl text-purple-200/80 mb-8 leading-relaxed">
-            Welcome to Celestia, {session.user?.name?.split(' ')[0] || 'Seeker'}. 
-            Choose your path through the mysteries of the universe.
+            Discover your cosmic destiny through personalized astrology readings, 
+            tarot guidance, and birth chart analysis. No Google account required - 
+            everyone welcome.
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}
+              className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-purple-900 font-bold py-4 px-8 text-lg rounded-full transform hover:scale-105 transition-all duration-300"
+            >
+              Explore Services
+            </Button>
+            <Button 
+              variant="outline"
+              className="border-yellow-500/50 text-white hover:bg-yellow-500/10 font-bold py-4 px-8 text-lg rounded-full transition-all duration-300"
+              onClick={() => window.open('mailto:Lago.mistico11@gmail.com', '_blank')}
+            >
+              Contact Oracle
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Services Section */}
-      <section className="py-16 px-6">
+      {/* Services Section - Always Visible */}
+      <section id="services" className="py-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-white mb-4 flex items-center justify-center gap-3">
@@ -312,7 +334,7 @@ export default function Home() {
               <Sun className="w-8 h-8 text-yellow-400" />
             </h2>
             <p className="text-lg text-purple-200/80 max-w-2xl mx-auto">
-              Choose your celestial consultation to unlock the wisdom of the stars
+              Choose your celestial consultation - available to everyone, with or without Google
             </p>
           </div>
 
@@ -339,9 +361,9 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
             <div className="text-center p-6 rounded-lg bg-gradient-to-br from-purple-800/30 to-indigo-800/30 border border-yellow-500/20">
               <Calendar className="w-10 h-10 text-yellow-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-3">Seamless Booking</h3>
+              <h3 className="text-lg font-semibold text-white mb-3">Easy Booking</h3>
               <p className="text-purple-200/70 text-sm">
-                Automated Google Calendar integration with Meet links for your sessions
+                Multiple ways to book: Google account, email, or direct contact
               </p>
             </div>
             <div className="text-center p-6 rounded-lg bg-gradient-to-br from-purple-800/30 to-indigo-800/30 border border-yellow-500/20">
@@ -353,10 +375,28 @@ export default function Home() {
             </div>
             <div className="text-center p-6 rounded-lg bg-gradient-to-br from-purple-800/30 to-indigo-800/30 border border-yellow-500/20">
               <Mail className="w-10 h-10 text-yellow-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-3">Complete Records</h3>
+              <h3 className="text-lg font-semibold text-white mb-3">Inclusive Access</h3>
               <p className="text-purple-200/70 text-sm">
-                Detailed summaries and insights delivered to your inbox
+                Everyone welcome - Google account helpful but not required
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="py-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-8">
+            Connect with the Universe
+          </h2>
+          <p className="text-lg text-purple-200/80 mb-8">
+            Ready to begin your mystical journey? Multiple ways to get started.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <div className="flex items-center justify-center text-purple-200">
+              <Mail className="w-5 h-5 mr-2" />
+              <span>Lago.mistico11@gmail.com</span>
             </div>
           </div>
         </div>
@@ -382,6 +422,13 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      {/* Login Modal */}
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        onSignIn={handleSignIn}
+      />
     </div>
   );
 }
