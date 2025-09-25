@@ -103,7 +103,10 @@ export default NextAuth({
           
           if (!user) {
             // Create new user for Google OAuth
+            const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            
             user = {
+              id: userId,
               email: session.user.email,
               name: session.user.name,
               image: session.user.image,
@@ -117,11 +120,11 @@ export default NextAuth({
               }
             };
             
-            const result = await db.collection('users').insertOne(user);
-            session.user.id = result.insertedId.toString();
+            await db.collection('users').insertOne(user);
+            session.user.id = userId;
             session.user.role = user.role;
           } else {
-            session.user.id = user._id.toString();
+            session.user.id = user.id;
             session.user.role = user.role;
           }
         } catch (error) {
