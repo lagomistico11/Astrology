@@ -612,48 +612,6 @@ class AstrologyBackendTester:
             print(f"❌ Auth Endpoints: FAILED - {str(e)}")
             return False
 
-    def test_stripe_integration(self):
-        """Test Stripe checkout session creation"""
-        print("🔍 Testing Stripe Integration...")
-        try:
-            test_data = {
-                "serviceId": "personal_tarot",
-                "userId": "test@example.com",
-                "serviceName": "Personal Tarot Reading",
-                "price": 85,
-                "duration": 60
-            }
-            
-            response = requests.post(
-                f"{API_BASE}/create-checkout",
-                json=test_data,
-                headers={"Content-Type": "application/json"},
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if "url" in data and "sessionId" in data:
-                    self.results["stripe_integration"]["status"] = "pass"
-                    self.results["stripe_integration"]["details"] = "Stripe checkout session created successfully"
-                    print("✅ Stripe Integration: PASSED")
-                    return True
-                else:
-                    self.results["stripe_integration"]["status"] = "fail"
-                    self.results["stripe_integration"]["details"] = f"Missing required fields in response: {data}"
-                    print(f"❌ Stripe Integration: FAILED - Missing fields: {data}")
-                    return False
-            else:
-                self.results["stripe_integration"]["status"] = "fail"
-                self.results["stripe_integration"]["details"] = f"HTTP {response.status_code}: {response.text}"
-                print(f"❌ Stripe Integration: FAILED - HTTP {response.status_code}")
-                return False
-                
-        except requests.exceptions.RequestException as e:
-            self.results["stripe_integration"]["status"] = "fail"
-            self.results["stripe_integration"]["details"] = f"Request failed: {str(e)}"
-            print(f"❌ Stripe Integration: FAILED - {str(e)}")
-            return False
 
     def test_database_connection(self):
         """Test database connection by fetching bookings"""
@@ -676,7 +634,7 @@ class AstrologyBackendTester:
                 else:
                     self.results["database_connection"]["status"] = "fail"
                     self.results["database_connection"]["details"] = f"Unexpected response format: {data}"
-                    print(f"❌ Database Connection: FAILED - Unexpected format: {data}")
+                    print(f"❌ Database Connection: FAILED - Unexpected format")
                     return False
             else:
                 self.results["database_connection"]["status"] = "fail"
@@ -731,48 +689,47 @@ class AstrologyBackendTester:
             print(f"❌ Email Service: FAILED - {str(e)}")
             return False
 
-    def test_auth_setup(self):
-        """Test NextAuth configuration by checking auth endpoints"""
-        print("🔍 Testing Authentication Setup...")
+    def test_stripe_integration(self):
+        """Test Stripe checkout session creation"""
+        print("🔍 Testing Stripe Integration...")
         try:
-            # Test NextAuth configuration endpoint
-            response = requests.get(f"{API_BASE}/auth/providers", timeout=10)
+            test_data = {
+                "serviceId": "personal_tarot",
+                "userId": "test@example.com",
+                "serviceName": "Personal Tarot Reading",
+                "price": 85,
+                "duration": 60
+            }
+            
+            response = requests.post(
+                f"{API_BASE}/create-checkout",
+                json=test_data,
+                headers={"Content-Type": "application/json"},
+                timeout=15
+            )
             
             if response.status_code == 200:
                 data = response.json()
-                if "google" in data:
-                    self.results["auth_setup"]["status"] = "pass"
-                    self.results["auth_setup"]["details"] = "NextAuth Google provider configured correctly"
-                    print("✅ Authentication Setup: PASSED")
+                if "url" in data and "sessionId" in data:
+                    self.results["stripe_integration"]["status"] = "pass"
+                    self.results["stripe_integration"]["details"] = "Stripe checkout session created successfully"
+                    print("✅ Stripe Integration: PASSED")
                     return True
                 else:
-                    self.results["auth_setup"]["status"] = "fail"
-                    self.results["auth_setup"]["details"] = f"Google provider not found: {data}"
-                    print(f"❌ Authentication Setup: FAILED - Google provider missing: {data}")
-                    return False
-            elif response.status_code == 500:
-                # Try alternative test - check if auth routes are handled
-                response2 = requests.get(f"{API_BASE}/auth/signin", timeout=10)
-                if response2.status_code in [200, 302]:  # 302 is redirect which is expected
-                    self.results["auth_setup"]["status"] = "pass"
-                    self.results["auth_setup"]["details"] = "NextAuth routes are accessible (signin endpoint responds)"
-                    print("✅ Authentication Setup: PASSED (via signin endpoint)")
-                    return True
-                else:
-                    self.results["auth_setup"]["status"] = "fail"
-                    self.results["auth_setup"]["details"] = f"Both providers and signin endpoints failed. HTTP {response.status_code}: {response.text[:200]}"
-                    print(f"❌ Authentication Setup: FAILED - Both endpoints failed")
+                    self.results["stripe_integration"]["status"] = "fail"
+                    self.results["stripe_integration"]["details"] = f"Missing required fields in response: {data}"
+                    print(f"❌ Stripe Integration: FAILED - Missing fields")
                     return False
             else:
-                self.results["auth_setup"]["status"] = "fail"
-                self.results["auth_setup"]["details"] = f"HTTP {response.status_code}: {response.text[:200]}"
-                print(f"❌ Authentication Setup: FAILED - HTTP {response.status_code}")
+                self.results["stripe_integration"]["status"] = "fail"
+                self.results["stripe_integration"]["details"] = f"HTTP {response.status_code}: {response.text}"
+                print(f"❌ Stripe Integration: FAILED - HTTP {response.status_code}")
                 return False
                 
         except requests.exceptions.RequestException as e:
-            self.results["auth_setup"]["status"] = "fail"
-            self.results["auth_setup"]["details"] = f"Request failed: {str(e)}"
-            print(f"❌ Authentication Setup: FAILED - {str(e)}")
+            self.results["stripe_integration"]["status"] = "fail"
+            self.results["stripe_integration"]["details"] = f"Request failed: {str(e)}"
+            print(f"❌ Stripe Integration: FAILED - {str(e)}")
             return False
 
     def test_error_handling(self):
@@ -797,7 +754,7 @@ class AstrologyBackendTester:
                 else:
                     self.results["error_handling"]["status"] = "fail"
                     self.results["error_handling"]["details"] = f"Error response missing error field: {data}"
-                    print(f"❌ Error Handling: FAILED - Missing error field: {data}")
+                    print(f"❌ Error Handling: FAILED - Missing error field")
                     return False
             else:
                 self.results["error_handling"]["status"] = "fail"
@@ -812,39 +769,83 @@ class AstrologyBackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests"""
-        print("🚀 Starting Astrology Platform Backend Tests")
-        print("=" * 60)
+        """Run all comprehensive backend tests"""
+        print("🚀 Starting Comprehensive Astrology Platform Backend Tests")
+        print("=" * 80)
         
-        # Run tests in order of priority
+        # Run tests in logical order
         tests = [
+            # Core Infrastructure
             ("API Health Check", self.test_api_health),
             ("Database Connection", self.test_database_connection),
-            ("Stripe Integration", self.test_stripe_integration),
+            ("Error Handling", self.test_error_handling),
+            
+            # Authentication System
+            ("User Registration", self.test_user_registration),
+            ("Auth Endpoints", self.test_auth_endpoints),
+            ("Registration Notifications", self.test_registration_notifications),
+            
+            # Admin Portal APIs
+            ("Admin Stats", self.test_admin_stats),
+            ("Admin Users", self.test_admin_users),
+            ("Admin Revenue", self.test_admin_revenue),
+            ("Admin Sessions", self.test_admin_sessions),
+            ("Admin Notes", self.test_admin_notes),
+            
+            # Client Portal APIs
+            ("Birth Chart Generation", self.test_birth_chart_generation),
+            ("Swiss Ephemeris Integration", self.test_swiss_ephemeris),
+            ("User Profile", self.test_user_profile),
+            ("User Sessions", self.test_user_sessions),
+            ("User Notes", self.test_user_notes),
+            
+            # External Integrations
             ("Email Service", self.test_email_service),
-            ("Authentication Setup", self.test_auth_setup),
-            ("Error Handling", self.test_error_handling)
+            ("Stripe Integration", self.test_stripe_integration)
         ]
         
         passed = 0
         total = len(tests)
         
+        print(f"Running {total} comprehensive tests...\n")
+        
         for test_name, test_func in tests:
-            print(f"\n📋 Running {test_name}...")
+            print(f"📋 Running {test_name}...")
             if test_func():
                 passed += 1
             time.sleep(1)  # Brief pause between tests
+            print()  # Add spacing between tests
         
-        print("\n" + "=" * 60)
-        print(f"🏁 Test Results: {passed}/{total} tests passed")
-        print("=" * 60)
+        print("=" * 80)
+        print(f"🏁 Comprehensive Test Results: {passed}/{total} tests passed")
+        print("=" * 80)
         
-        # Print detailed results
-        for test_name, result in self.results.items():
-            status_icon = "✅" if result["status"] == "pass" else "❌" if result["status"] == "fail" else "⏳"
-            print(f"{status_icon} {test_name.replace('_', ' ').title()}: {result['status'].upper()}")
-            if result["details"]:
-                print(f"   Details: {result['details']}")
+        # Print detailed results by category
+        categories = {
+            "Core Infrastructure": ["api_health", "database_connection", "error_handling"],
+            "Authentication System": ["user_registration", "auth_endpoints", "registration_notifications"],
+            "Admin Portal APIs": ["admin_stats", "admin_users", "admin_revenue", "admin_sessions", "admin_notes"],
+            "Client Portal APIs": ["birth_chart_generation", "swiss_ephemeris", "user_profile", "user_sessions", "user_notes"],
+            "External Integrations": ["email_service", "stripe_integration"]
+        }
+        
+        for category, test_keys in categories.items():
+            print(f"\n📊 {category}:")
+            for key in test_keys:
+                if key in self.results:
+                    result = self.results[key]
+                    status_icon = "✅" if result["status"] == "pass" else "❌" if result["status"] == "fail" else "⏳"
+                    test_name = key.replace('_', ' ').title()
+                    print(f"  {status_icon} {test_name}: {result['status'].upper()}")
+                    if result["details"]:
+                        print(f"     └─ {result['details']}")
+        
+        # Summary of critical issues
+        failed_tests = [k for k, v in self.results.items() if v["status"] == "fail"]
+        if failed_tests:
+            print(f"\n🚨 Critical Issues Found:")
+            for test in failed_tests:
+                print(f"   • {test.replace('_', ' ').title()}: {self.results[test]['details']}")
         
         return self.results
 
@@ -855,8 +856,8 @@ if __name__ == "__main__":
     # Exit with appropriate code
     failed_tests = [k for k, v in results.items() if v["status"] == "fail"]
     if failed_tests:
-        print(f"\n❌ {len(failed_tests)} test(s) failed: {', '.join(failed_tests)}")
+        print(f"\n❌ {len(failed_tests)} test(s) failed")
         exit(1)
     else:
-        print("\n✅ All tests passed!")
+        print("\n✅ All comprehensive tests passed!")
         exit(0)
