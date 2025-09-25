@@ -55,6 +55,25 @@ const emailTransporter = nodemailer.createTransport({
 // Birth chart calculation using Swiss Ephemeris
 async function calculateBirthChart({ birthDate, birthTime, latitude, longitude }) {
   try {
+    if (!swisseph) {
+      console.warn('Swiss Ephemeris not available, returning mock data');
+      // Return mock data for testing when swisseph is not available
+      return {
+        julianDay: 2451545.0, // Mock Julian Day
+        planets: [
+          { name: 'Sun', longitude: 280.5, sign: 'Capricorn', degree: 10.5 },
+          { name: 'Moon', longitude: 342.3, sign: 'Pisces', degree: 12.3 },
+          { name: 'Mercury', longitude: 275.7, sign: 'Capricorn', degree: 5.7 },
+          { name: 'Venus', longitude: 295.2, sign: 'Capricorn', degree: 25.2 },
+          { name: 'Mars', longitude: 45.8, sign: 'Taurus', degree: 15.8 }
+        ],
+        houses: [],
+        aspects: [],
+        generated: new Date().toISOString(),
+        note: 'Mock data - Swiss Ephemeris not available'
+      };
+    }
+
     // This is a simplified example - real Swiss Ephemeris integration would be more complex
     const julianDay = swisseph.swe_julday(
       parseInt(birthDate.split('-')[0]), // year
