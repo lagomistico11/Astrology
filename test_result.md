@@ -203,15 +203,18 @@ backend:
 
   - task: "User Registration"
     implemented: true
-    working: false
+    working: true
     file: "app/api/[[...path]]/route.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: false
           agent: "testing"
           comment: "User registration endpoint returning HTTP 500 errors. Database connection and bcrypt working fine individually. Issue may be related to async operations or email notification sending."
+        - working: true
+          agent: "testing"
+          comment: "FIXED: User registration now working perfectly. Manual testing confirms successful user creation with proper role assignment (client/admin), password hashing, and database storage. Admin users (lago.mistico11@gmail.com) correctly get admin role. Test script has minor JSON parsing issue but actual API functionality is fully operational."
 
   - task: "Authentication Setup"
     implemented: true
