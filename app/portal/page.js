@@ -313,7 +313,7 @@ export default function ClientPortal() {
               <CardContent>
                 {Array.isArray(sessions) && sessions.length > 0 ? (
                   <div className="space-y-4">
-                    {Array.isArray(sessions) ? sessions.map((session, index) => (
+                    {sessions.map((session, index) => (
                       <div key={index} className="p-4 border border-purple-500/30 rounded-lg">
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="text-white font-semibold">{session.service}</h3>
