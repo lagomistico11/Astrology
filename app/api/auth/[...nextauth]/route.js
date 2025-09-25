@@ -101,10 +101,14 @@ const handler = NextAuth({
         token.id = user.id;
       }
 
-      if (Date.now() < token.expiresAt * 1000) {
+      // Only check expiration for Google OAuth tokens, not for credentials
+      if (token.expiresAt && Date.now() < token.expiresAt * 1000) {
         return token;
+      } else if (token.expiresAt && Date.now() >= token.expiresAt * 1000) {
+        return refreshAccessToken(token);
       }
-      return refreshAccessToken(token);
+      
+      return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
