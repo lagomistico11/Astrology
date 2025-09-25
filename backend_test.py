@@ -94,22 +94,21 @@ class AstrologyPlatformTester:
         """Test new payment system /api/payments/v1/checkout/session"""
         try:
             payload = {
-                "serviceId": "personal-tarot",
-                "userId": "test@example.com",
-                "serviceName": "Personal Tarot Reading",
-                "price": 85,
-                "duration": 60
+                "serviceKey": "personal-tarot",
+                "userEmail": "test@example.com",
+                "successUrl": f"{BASE_URL}/success",
+                "cancelUrl": f"{BASE_URL}/cancel"
             }
             response = requests.post(f"{API_BASE}/payments/v1/checkout/session", 
                                    json=payload, timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                if data.get('url') and data.get('sessionId'):
+                if data.get('url') and data.get('checkoutSessionId'):
                     self.log_result("New Payment System", True, 
-                                  f"Checkout session created: {data.get('sessionId')[:20]}...")
+                                  f"Checkout session created: {data.get('checkoutSessionId')[:20]}...")
                     return True
                 else:
-                    self.log_result("New Payment System", False, "Missing URL or sessionId", data)
+                    self.log_result("New Payment System", False, "Missing URL or checkoutSessionId", data)
                     return False
             else:
                 self.log_result("New Payment System", False, f"HTTP {response.status_code}", response.text)
@@ -130,10 +129,10 @@ class AstrologyPlatformTester:
                 
                 # Test POST session creation
                 payload = {
-                    "serviceId": "personal-tarot",
+                    "serviceKey": "personal-tarot",
+                    "scheduledAt": "2024-02-15T14:00:00Z",
                     "userId": "test@example.com",
-                    "scheduledDate": "2024-02-15",
-                    "scheduledTime": "14:00"
+                    "notes": "Test session booking"
                 }
                 response = requests.post(f"{API_BASE}/sessions", json=payload, timeout=10)
                 if response.status_code in [200, 201]:
