@@ -196,8 +196,8 @@ class AstrologyPlatformTester:
             response = requests.get(f"{API_BASE}/auth/providers", timeout=10)
             if response.status_code == 200:
                 providers = response.json()
-                if 'google' in providers:
-                    self.log_result("NextAuth Providers", True, "Google OAuth provider configured")
+                if 'google' in providers and 'credentials' in providers:
+                    self.log_result("NextAuth Providers", True, "Both Google OAuth and Credentials providers configured")
                     
                     # Test signin endpoint
                     response = requests.get(f"{API_BASE}/auth/signin", timeout=10)
@@ -208,13 +208,189 @@ class AstrologyPlatformTester:
                         self.log_result("NextAuth Signin", False, f"HTTP {response.status_code}")
                         return False
                 else:
-                    self.log_result("NextAuth Providers", False, "Google provider not found", providers)
+                    self.log_result("NextAuth Providers", False, f"Missing providers. Available: {list(providers.keys())}", providers)
                     return False
             else:
                 self.log_result("NextAuth Providers", False, f"HTTP {response.status_code}", response.text)
                 return False
         except Exception as e:
             self.log_result("NextAuth Authentication", False, f"Exception: {str(e)}")
+            return False
+
+    def test_credentials_authentication(self):
+        """Test credentials sign-in with test user: test.working@example.com / workingtest123"""
+        try:
+            # First get CSRF token
+            csrf_response = requests.get(f"{API_BASE}/auth/csrf", timeout=10)
+            if csrf_response.status_code != 200:
+                self.log_result("Credentials Auth - CSRF Token", False, f"HTTP {csrf_response.status_code}")
+                return False
+                
+            csrf_token = csrf_response.json().get('csrfToken')
+            if not csrf_token:
+                self.log_result("Credentials Auth - CSRF Token", False, "No CSRF token in response")
+                return False
+                
+            self.log_result("Credentials Auth - CSRF Token", True, "CSRF token obtained successfully")
+            
+            # Test credentials sign-in
+            signin_data = {
+                'email': 'test.working@example.com',
+                'password': 'workingtest123',
+                'csrfToken': csrf_token,
+                'callbackUrl': f"{BASE_URL}/portal",
+                'json': 'true'
+            }
+            
+            headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            }
+            
+            # Convert to form data
+            form_data = '&'.join([f"{k}={v}" for k, v in signin_data.items()])
+            
+            response = requests.post(
+                f"{API_BASE}/auth/callback/credentials",
+                data=form_data,
+                headers=headers,
+                timeout=10,
+                allow_redirects=False
+            )
+            
+            print(f"    Credentials Auth Response Status: {response.status_code}")
+            print(f"    Response Headers: {dict(response.headers)}")
+            print(f"    Response Body: {response.text[:300]}...")
+            
+            # Check for successful authentication
+            if response.status_code in [200, 302]:
+                if response.status_code == 302:
+                    location = response.headers.get('location', '')
+                    if '/portal' in location:
+                        self.log_result("Credentials Authentication", True, 
+                                      f"Successful authentication - redirected to portal: {location}")
+                        return True
+                    elif 'error' in location.lower():
+                        self.log_result("Credentials Authentication", False, 
+                                      f"Authentication failed - error redirect: {location}")
+                        return False
+                    else:
+                        self.log_result("Credentials Authentication", False, 
+                                      f"Unexpected redirect: {location}")
+                        return False
+                else:
+                    # Check response body for success indicators
+                    response_text = response.text.lower()
+                    if 'error' in response_text:
+                        self.log_result("Credentials Authentication", False, 
+                                      f"Authentication error: {response.text}")
+                        return False
+                    else:
+                        self.log_result("Credentials Authentication", True, 
+                                      f"Authentication successful (HTTP 200)")
+                        return True
+            else:
+                self.log_result("Credentials Authentication", False, 
+                              f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Credentials Authentication", False, f"Exception: {str(e)}")
+            return False
+
+    def test_session_establishment(self):
+        """Test session establishment after credentials sign-in"""
+        try:
+            # Create a session to test authentication flow
+            session = requests.Session()
+            
+            # First get CSRF token
+            csrf_response = session.get(f"{API_BASE}/auth/csrf", timeout=10)
+            if csrf_response.status_code != 200:
+                self.log_result("Session Establishment", False, "Could not get CSRF token")
+                return False
+                
+            csrf_token = csrf_response.json().get('csrfToken')
+            
+            # Attempt sign-in
+            signin_data = {
+                'email': 'test.working@example.com',
+                'password': 'workingtest123',
+                'csrfToken': csrf_token,
+                'callbackUrl': f"{BASE_URL}/portal",
+                'json': 'true'
+            }
+            
+            headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            }
+            
+            form_data = '&'.join([f"{k}={v}" for k, v in signin_data.items()])
+            
+            signin_response = session.post(
+                f"{API_BASE}/auth/callback/credentials",
+                data=form_data,
+                headers=headers,
+                timeout=10,
+                allow_redirects=False
+            )
+            
+            # Check if we have session cookies
+            cookies = session.cookies.get_dict()
+            has_session_cookie = any('session' in cookie.lower() or 'auth' in cookie.lower() 
+                                    for cookie in cookies.keys())
+            
+            if has_session_cookie:
+                self.log_result("Session Establishment", True, 
+                              f"Session cookies established: {list(cookies.keys())}")
+                return True
+            else:
+                self.log_result("Session Establishment", False, 
+                              f"No session cookies found. Available cookies: {list(cookies.keys())}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Session Establishment", False, f"Exception: {str(e)}")
+            return False
+
+    def test_database_user_verification(self):
+        """Verify test user exists in database"""
+        try:
+            # Try to register the same user to see if they already exist
+            registration_data = {
+                'email': 'test.working@example.com',
+                'password': 'workingtest123',
+                'name': 'Test Working User'
+            }
+            
+            response = requests.post(
+                f"{API_BASE}/register",
+                json=registration_data,
+                timeout=10
+            )
+            
+            if response.status_code == 400:
+                response_data = response.json()
+                if 'already exists' in response_data.get('message', '').lower():
+                    self.log_result("Database User Verification", True, 
+                                  f"Test user test.working@example.com exists in database")
+                    return True
+                else:
+                    self.log_result("Database User Verification", False, 
+                                  f"Unexpected 400 response: {response_data}")
+                    return False
+            elif response.status_code == 201:
+                self.log_result("Database User Verification", True, 
+                              f"Test user test.working@example.com was just created")
+                return True
+            else:
+                self.log_result("Database User Verification", False, 
+                              f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Database User Verification", False, f"Exception: {str(e)}")
             return False
 
     def test_user_registration(self):
