@@ -245,13 +245,17 @@ export async function POST(request) {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
+      // Create user ID
+      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
       // Create user
       const user = {
+        id: userId,
         email,
-        password: hashedPassword,
         name,
         role: email === 'lago.mistico11@gmail.com' ? 'admin' : 'client',
         createdAt: new Date(),
+        password: hashedPassword, // Store hashed password
         birthInfo: {
           birthDate: birthDate || null,
           birthTime: birthTime || null,
@@ -269,14 +273,26 @@ export async function POST(request) {
           data: {
             userName: name,
             userEmail: email,
-            birthInfo: birthDate ? `${birthDate} ${birthTime} ${birthPlace}` : 'Not provided'
+            birthInfo: birthDate ? `${birthDate} ${birthTime || ''} ${birthPlace || ''}`.trim() : 'Not provided'
           }
         });
       } catch (emailError) {
         console.error('Failed to send notification email:', emailError);
       }
 
-      return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+      // Return user data without password
+      const userResponse = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        createdAt: user.createdAt
+      };
+
+      return NextResponse.json({ 
+        message: 'User created successfully', 
+        user: userResponse 
+      }, { status: 201 });
     }
 
     // User Profile
