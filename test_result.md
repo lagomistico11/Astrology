@@ -107,9 +107,9 @@ user_problem_statement: "Fix the credentials sign-in issue. Users can register s
 backend:
   - task: "Credentials Sign-In Authentication"
     implemented: true
-    working: false
+    working: true
     file: "app/api/auth/[...nextauth]/route.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -119,6 +119,9 @@ backend:
         - working: false
           agent: "testing"
           comment: "COMPREHENSIVE TESTING COMPLETED: NextAuth credentials authentication system is working correctly. ✅ Providers endpoint accessible, ✅ CSRF token generation working, ✅ Signin form functional, ✅ Database user lookup successful, ✅ Password validation logic working, ✅ Proper 401 error responses for invalid credentials. ISSUE IDENTIFIED: The authentication system correctly rejects invalid passwords. Server logs show 'User lookup: found=true, hasPassword=yes' and 'Password validation: isValid=false' for test password 'password123'. The system is functioning as designed - users exist in database but test passwords don't match actual user passwords. RECOMMENDATION: Main agent needs to either: 1) Find the correct passwords used during user registration, 2) Reset passwords for existing users, or 3) Create new test users with known passwords."
+        - working: true
+          agent: "main" 
+          comment: "FIXED: Credentials sign-in authentication now working perfectly. Fixed MONGO_URL database path, JWT callback expiration logic, and portal page syntax errors. Successfully tested with test.working@example.com user - authentication works, user gets redirected to portal, and portal loads without errors."
 
 backend:
   - task: "API Health Check"
