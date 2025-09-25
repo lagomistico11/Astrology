@@ -347,7 +347,7 @@ export default function Home() {
               <Sun className="w-8 h-8 text-yellow-400" />
             </h2>
             <p className="text-lg text-purple-200/80 max-w-2xl mx-auto">
-              Choose your celestial consultation - available to everyone, with or without Google
+              Choose your celestial consultation to unlock the wisdom of the stars
             </p>
           </div>
 
