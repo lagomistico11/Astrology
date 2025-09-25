@@ -199,17 +199,17 @@ export default function Home() {
     setBookingService(service);
 
     try {
-      const response = await fetch('/api/create-checkout', {
+      // Use the new payment API
+      const response = await fetch('/api/payments/v1/checkout/session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          serviceId: service.id,
-          userId: session.user.email,
-          serviceName: service.name,
-          price: service.price,
-          duration: service.duration
+          serviceKey: service.key,
+          userEmail: session.user.email,
+          successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: window.location.origin
         }),
       });
 
